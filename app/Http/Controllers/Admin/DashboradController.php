@@ -8,6 +8,7 @@ class DashboradController extends Controller
 {
     public function index()
     {
-        return view('admin.dashborad');
+        $data['title'] = "Dashborad";
+        return view('admin.dashborad', $data);
     }
 }

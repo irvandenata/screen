@@ -16,10 +16,10 @@ class CreateFormResultsTable extends Migration
         Schema::create('form_results', function (Blueprint $table) {
             $table->id();
             $table->string('value');
-            $table->unsignedBigInteger('user_id');
+            $table->string('identity');
+            $table->string('type');
             $table->unsignedBigInteger('form_id');
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onUpdate('CASCADE');
-            $table->foreign('form_id')->references('id')->on('forms')->onUpdate('CASCADE')->onUpdate('CASCADE');
+            $table->foreign('form_id')->references('id')->on('forms')->onDelete('CASCADE')->onUpdate('CASCADE');
 
             $table->timestamps();
         });

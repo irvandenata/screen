@@ -13,6 +13,11 @@ class Subevent extends Model
     {
         return $this->belongsTo(Event::class);
     }
+
+    public function forms()
+    {
+        return $this->hasMany(Form::class);
+    }
     public function files()
     {
         return $this->morphMany(File::class, 'fileable');

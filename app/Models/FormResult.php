@@ -9,4 +9,12 @@ class FormResult extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
 }

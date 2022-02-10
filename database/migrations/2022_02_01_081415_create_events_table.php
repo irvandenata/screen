@@ -20,10 +20,9 @@ class CreateEventsTable extends Migration
             $table->text('description');
             $table->string('contest_date');
             $table->text('slug');
-
             $table->unsignedBigInteger('screen_id');
             $table->timestamps();
-            $table->foreign('screen_id')->references('id')->on('screens')->onUpdate('CASCADE')->onUpdate('CASCADE');
+            $table->foreign('screen_id')->references('id')->on('screens')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 

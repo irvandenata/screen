@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSubformsTable extends Migration
+class CreateLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateSubformsTable extends Migration
      */
     public function up()
     {
-        Schema::create('subforms', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->unsignedBigInteger("form_id");
+            $table->string('user_id', 20)->nullable();
+            $table->string('ip', 20);
+            $table->string('event', 100)->nullable();
+            $table->text('extra')->nullable();
+
             $table->timestamps();
-            $table->foreign('form_id')->references('id')->on('forms')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 
@@ -29,6 +31,6 @@ class CreateSubformsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subforms');
+        Schema::dropIfExists('logs');
     }
 }

@@ -21,7 +21,13 @@
 <div class="form-group">
     <div class="form-line">
         <label for="number">Poster (Ukuran Kotak Maks. 2MB)</label>
-        <input type="file" name="file" class="form-control">
+        <input type="file" accept="image/*" name="file" class="form-control">
+    </div>
+</div>
+<div class="form-group">
+    <div class="form-line">
+        <label for="number">Role Book</label>
+        <input type="file" accept="application/pdf" name="rolebook" class="form-control">
     </div>
 </div>
 

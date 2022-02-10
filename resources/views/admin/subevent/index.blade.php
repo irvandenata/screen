@@ -40,8 +40,11 @@
                         <th>Nama</th>
                         <th>Buka Registrasi</th>
                         <th>Tutup Registrasi</th>
+                        <th>Status Registrasi</th>
+
                         <th>Gambar</th>
-                        <th width="10%">Action</th>
+                        <th>Role Book</th>
+                        <th width="20%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,6 +54,9 @@
         </div>
     </div>
     @include('admin.subevent._form')
+    @include('admin.subevent._addform')
+    @include('admin.subevent._detailform')
+    @include('admin.subevent._detailresponden')
 </div>
 @endsection
 
@@ -76,6 +82,11 @@
 @push('script')
 
     @include('crud.js')
+    <script>
+         var idForm=0;
+         var urlform = '/admin/form';
+         var urlresponden = '/admin/responden';
+    </script>
     <script>
         $('.activatedScreen').select2();
         let dataTable = $('#datatable').DataTable({
@@ -122,8 +133,13 @@
                     data: 'start_regist',
                     orderable: true
                 },
+
                 {
                     data: 'end_regist',
+                    orderable: true
+                },
+                {
+                    data: 'status',
                     orderable: true
                 },
 
@@ -131,6 +147,10 @@
 
                 {
                     data: 'image',
+                    orderable: true
+                },
+                {
+                    data: 'rolebook',
                     orderable: true
                 },
 
@@ -141,7 +161,6 @@
                 },
             ]
         });
-
     </script>
 
     <script>
@@ -157,9 +176,292 @@
 
         }
 
+
+        function addForm(id) {
+            $('#modalAddForm').modal('show');
+            idForm = id;
+        }
+
         function deleteItem(id) {
             deleteConfirm(id)
 
+        }
+
+        function activateRegist(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are You Sure ?',
+
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No, Quit!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+
+                    $.ajax({
+                        url: '/admin/subevent/activate',
+                        type: "post",
+                        cache: false,
+                        dataType: 'json',
+                        data: {
+                            subevent: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            reloadDatatable();
+                        },
+                        error: function (result) {
+                            $('#modalForm').modal('hide');
+
+                            if (result.responseJSON) {
+                                getError(result.responseJSON.errors);
+                            } else {
+                                console.log(result);
+                            }
+                        },
+                    })
+                    swalWithBootstrapButtons.fire(
+                        'Success!',
+                        'Status Telah diganti',
+                        'success'
+                    )
+
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancel',
+                        'Process Has Been Canceled',
+                        'error'
+                    )
+                }
+            })
+        }
+
+
+        $('#type').on('change', function () {
+            $('#addOpsi').empty()
+            if (this.value == 'select') {
+                $('#addOpsi').append(`<div class="row">
+                    <div class="col-5">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Pilihan Opsi</label>
+                            <input type="text" class="form-control options" name="end" placeholder="Opsi Select" />
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group ">
+                            <label for="type">Action</label>
+                            <div class="btn btn-success " onClick='addOption()'>Tambah</div>
+                        </div>
+                    </div>
+                </div>
+                Pilihan<br><hr>
+                <div id='valueOption'></div>
+
+                `)
+            }
+        });
+
+        function addOption() {
+            $('#valueOption').append('<div>' + $('.options').val() + '</div><input type="hidden" class="form-control optionform" name="subform[]" value="' + $('.options').val() + '" />')
+            $('.options').val('')
+            console.log($("input[name='subform[]']")
+                .map(function () {
+                    return $(this).val();
+                }).get())
+        }
+
+        function detailForm(id) {
+            $('#modalDetailForm').modal('show');
+            sessionStorage.setItem("idform", id)
+
+            reloadDatatableForm()
+        }
+
+         async function detailResponden(id) {
+            await $('#modalDetailResponden').modal('show');
+            await sessionStorage.setItem("idresponden", id)
+             await $('#headtable').empty()
+             var data =await 0;
+               await  $.ajax({
+                        url: '/admin/componentform/'+id,
+                        type: "get",
+                        cache: false,
+
+                        success: function (result) {
+                            data = result
+                            sessionStorage.setItem("headform", result)
+                        },
+                        error: function (result) {
+                            $('#modalForm').modal('hide');
+
+                            if (result.responseJSON) {
+                                getError(result.responseJSON.errors);
+                            } else {
+                                console.log(result);
+                            }
+                        },
+                    }).then(function(){
+                           $('#headtable').append(`   <th width="10%">No</th>`)
+                        data.forEach(function(item){
+                                $('#headtable').append(`<th>`+item+`</th>`)
+                        })
+                          $('#headtable').append(`<th width="20%">Action</th>`)
+
+                    })
+
+            reloadDatatableResponden()
+        }
+
+        $(function () {
+            $('#modalAddForm form').on('submit', function (e) {
+                e.preventDefault();
+                saveForm();
+            });
+        });
+
+        function saveForm() {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are You Sure ?',
+                text: "Kamu Akan Menambah Input!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No, Quit!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    var screen = $("#screen").val();
+
+                    $.ajax({
+                        url: '/admin/subevent/saveform',
+                        type: "post",
+                        cache: false,
+                        dataType: 'json',
+                        data: {
+                            id: idForm,
+                            input: $('.input').val(),
+                            type: $('.type').val(),
+                            option: $("input[name='subform[]']")
+                                .map(function () {
+                                    return $(this).val();
+                                }).get(),
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            reloadDatatable();
+                        },
+                        error: function (result) {
+                            $('#modalForm').modal('hide');
+
+                            if (result.responseJSON) {
+                                getError(result.responseJSON.errors);
+                            } else {
+                                console.log(result);
+                            }
+                        },
+                    })
+                    swalWithBootstrapButtons.fire(
+                        'Success!',
+                        'Input Berhasil ditambahkan',
+                        'success'
+                    )
+
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancel',
+                        'Process Has Been Canceled',
+                        'error'
+                    )
+                }
+            })
+        }
+
+        function deleteForm(id) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are You Sure ?',
+                text: "Kamu Akan Menghapus Input Ini!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No, Quit!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    var screen = $("#screen").val();
+
+                    $.ajax({
+                        url: '/admin/form/' + id,
+                        type: "DELETE",
+
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+
+                        success: function (result) {
+                            reloadDatatableForm();
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Delete successfully'
+                            })
+
+                            // toastr.success('Berhasil Dihapus', 'Success');
+                        },
+                        error: function (errors) {
+                            getError(errors.responseJSON.errors);
+                        }
+                    });
+                    swalWithBootstrapButtons.fire(
+                        'Success!',
+                        'Input Berhasil dihapus',
+                        'success'
+                    )
+
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancel',
+                        'Process Has Been Canceled',
+                        'error'
+                    )
+                }
+            })
         }
 
     </script>
@@ -177,6 +479,192 @@
         /** reload dataTable Setelah mengubah data**/
         function reloadDatatable() {
             dataTable.ajax.reload();
+        }
+
+        function reloadDatatableForm() {
+
+         $('#detailForm').dataTable().fnClearTable();
+             $('#detailForm').dataTable().fnDestroy();
+        let dataTable2 = $('#detailForm').DataTable({
+            dom: 'lBfrtip',
+            buttons: [{
+                className: 'btn btn-warning btn-sm mr-2',
+                text: 'Reload',
+                action: function (e, dt, node, config) {
+                    reloadDatatableForm();
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Reload'
+                    })
+                }
+            }],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            searching: true,
+
+            pageLength: 5,
+
+            lengthMenu: [
+                [5, 10, 15, -1],
+                [5, 10, 15, "All"]
+            ],
+            ajax: {
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: urlform,
+                 type: 'POST',
+               data: {
+                   id:sessionStorage.getItem("idform")
+               },
+                },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    orderable: false
+                },
+                {
+                    data: 'name',
+                    orderable: true
+                },
+                {
+                    data: 'type',
+                    orderable: true
+                },
+                {
+                    data: 'option',
+                    orderable: true
+                },
+                {
+                    data: 'action',
+                    name: '#',
+                    orderable: false
+                },
+            ]
+        });
+        }
+        function deleteRespon(data){
+             const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are You Sure ?',
+                text: "Kamu Akan Menghapus Responden Ini!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No, Quit!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    var screen = $("#screen").val();
+
+                    $.ajax({
+                        url: '/admin/deleteresponden/' + data,
+                        type: "DELETE",
+
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+
+                        success: function (result) {
+                            reloadDatatableResponden();
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Delete successfully'
+                            })
+
+                            // toastr.success('Berhasil Dihapus', 'Success');
+                        },
+                        error: function (errors) {
+                            getError(errors.responseJSON.errors);
+                        }
+                    });
+                    swalWithBootstrapButtons.fire(
+                        'Success!',
+                        'Responden Berhasil dihapus',
+                        'success'
+                    )
+
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancel',
+                        'Process Has Been Canceled',
+                        'error'
+                    )
+                }
+            })
+        }
+
+        async function reloadDatatableResponden() {
+                var columner = await [
+                {
+                    data: 'DT_RowIndex',
+                    orderable: false
+                },
+            ]
+             var col = await sessionStorage.getItem('headform').split(",")
+             await col.forEach(function(item){
+
+                columner.push( {
+                    data: item,
+                    orderable: true
+                      },
+                        )
+                        })
+                     columner.push(
+                            {
+                    data: 'action',
+                    name: '#',
+                    orderable: false
+                },
+                 )
+         $('#detailResponden').dataTable().fnClearTable();
+            $('#detailResponden').dataTable().fnDestroy();
+        let dataTable3 = await $('#detailResponden').DataTable({
+            dom: 'lBfrtip',
+            buttons: [{
+                className: 'btn btn-warning btn-sm mr-2',
+                text: 'Reload',
+                action: function (e, dt, node, config) {
+                    reloadDatatableResponden();
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Reload'
+                    })
+                }
+            }],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            searching: true,
+
+            pageLength: 5,
+
+            lengthMenu: [
+                [5, 10, 15, -1],
+                [5, 10, 15, "All"]
+            ],
+            ajax: {
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: urlresponden,
+                 type: 'POST',
+               data: {
+                   id:sessionStorage.getItem("idresponden")
+               },
+                },
+            columns: columner
+        });
         }
 
         function activateScreen() {

@@ -84,10 +84,7 @@ class ScreenController extends Controller
         $item->save();
         if ($request->file('file')) {
             $name_picture = Str::random(6) . '.png';
-            $picture = Image::make($request['file'])->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->encode('png', 100);
+            $picture = Image::make($request['file'])->encode('png', 100);
             $namePath = "screen";
             $path = $namePath . "/" . $name_picture;
 
@@ -149,10 +146,7 @@ class ScreenController extends Controller
             }
 
             $name_picture = Str::random(6) . '.png';
-            $picture = Image::make($request['file'])->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->encode('png', 100);
+            $picture = Image::make($request['file'])->encode('png', 100);
             $namePath = "screen";
             $path = $namePath . "/" . $name_picture;
             Storage::put("public/" . $path, $picture);

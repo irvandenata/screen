@@ -65,26 +65,23 @@
                                 <div class="notification-box">
                                     <ul class="list-inline mb-0">
                                         <li>
-                                            <a href="javascript:void(0);" class="right-bar-toggle">
+                                            <a href="javascript:void(0);"
+                                            onclick="readNotif()"
+                                            class="right-bar-toggle">
                                                 <i class="mdi mdi-bell-outline noti-icon"></i>
                                             </a>
+                                            @if (count(auth()->user()->unreadNotifications)>0)
                                             <div class="noti-dot">
                                                 <span class="dot"></span>
                                                 <span class="pulse"></span>
                                             </div>
+                                            @endif
+
                                         </li>
                                     </ul>
                                 </div>
                                 <!-- End Notification bar -->
                             </li>
-
-                            <li class="hide-phone">
-                                <form class="app-search">
-                                    <input type="text" placeholder="Search..." class="form-control">
-                                    <button type="submit"><i class="fa fa-search"></i></button>
-                                </form>
-                            </li>
-
                         </ul>
                     </nav>
                 </div><!-- end container -->
@@ -116,23 +113,16 @@
                             <a href="/admin" class="waves-effect"><i class="mdi mdi-view-dashboard"></i><span>Dashboard </span> </a>
                         </li>
                         <li>
-                            <a href="/admin/screen" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Screen</span></a>
+                            <a href="/admin/screen" class="waves-effect"><i class="fa fa-bullseye"></i><span>Screen</span></a>
                         </li>
                         <li>
-                            <a href="/admin/event" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Event</span></a>
-                        </li>
-
-                        <li>
-                            <a href="/admin/event" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Buat Form Pendaftaran</span></a>
+                            <a href="/admin/event" class="waves-effect"><i class="fa fa-code-fork"></i><span>Event</span></a>
                         </li>
                         <li>
-                            <a href="typography.html" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Peserta</span></a>
+                            <a href="/admin/profile" class="waves-effect"><i class="fa fa-user"></i><span>Akun</span></a>
                         </li>
                         <li>
-                            <a href="/admin/profile" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Akun</span></a>
-                        </li>
-                        <li>
-                            <a href="/admin/setting" class="waves-effect"><i class="mdi mdi-format-font"></i><span>Settings</span></a>
+                            <a href="/admin/setting" class="waves-effect"><i class="fa fa-cogs"></i><span>Settings</span></a>
                         </li>
                         <li>
                             <a href="{{ route('logout') }}" class="waves-effect" onclick="event.preventDefault();
@@ -191,66 +181,18 @@
             <h4 class="">Notifications</h4>
             <div class="notification-list nicescroll">
                 <ul class="list-group list-no-border user-list">
-                    <li class="list-group-item">
+                    @foreach (auth()->user()->unreadNotifications as $notif)
+                    <li class="list-group-item
+                    ">
                         <a href="#" class="user-list-item">
-                            <div class="avatar">
-                                <img src="{{ asset('cms') }}/images/users/avatar-2.jpg" alt="">
-                            </div>
                             <div class="user-desc">
-                                <span class="name">Michael Zenaty</span>
-                                <span class="desc">There are new settings available</span>
-                                <span class="time">2 hours ago</span>
+                                <span class="name">{{ $notif->data['subevent'] }}</span>
+                                <span class="desc">Terdapat Peserta Mendaftar</span>
+                                <span class="time">{{ $notif->data['date'] }}</span>
                             </div>
                         </a>
                     </li>
-                    <li class="list-group-item">
-                        <a href="#" class="user-list-item">
-                            <div class="icon bg-info">
-                                <i class="mdi mdi-account"></i>
-                            </div>
-                            <div class="user-desc">
-                                <span class="name">New Signup</span>
-                                <span class="desc">There are new settings available</span>
-                                <span class="time">5 hours ago</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#" class="user-list-item">
-                            <div class="icon bg-pink">
-                                <i class="mdi mdi-comment"></i>
-                            </div>
-                            <div class="user-desc">
-                                <span class="name">New Message received</span>
-                                <span class="desc">There are new settings available</span>
-                                <span class="time">1 day ago</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="list-group-item active">
-                        <a href="#" class="user-list-item">
-                            <div class="avatar">
-                                <img src="{{ asset('cms') }}/images/users/avatar-3.jpg" alt="">
-                            </div>
-                            <div class="user-desc">
-                                <span class="name">James Anderson</span>
-                                <span class="desc">There are new settings available</span>
-                                <span class="time">2 days ago</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="list-group-item active">
-                        <a href="#" class="user-list-item">
-                            <div class="icon bg-warning">
-                                <i class="mdi mdi-settings"></i>
-                            </div>
-                            <div class="user-desc">
-                                <span class="name">Settings</span>
-                                <span class="desc">There are new settings available</span>
-                                <span class="time">1 day ago</span>
-                            </div>
-                        </a>
-                    </li>
+                    @endforeach
 
                 </ul>
             </div>
@@ -299,6 +241,20 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         })
+
+        function readNotif(){
+                  $.ajax({
+                        url: '/admin/readnotif',
+                        type: "get",
+                        success: function (result) {
+
+                        },
+                        error: function (errors) {
+                            getError(errors.responseJSON.errors);
+                        }
+                    });
+                    console.log('success')
+        }
 
     </script>
     @stack('js')

@@ -21,7 +21,7 @@ class CreateFormsTable extends Migration
 
             $table->string("type");
             $table->timestamps();
-            $table->foreign('subevent_id')->references('id')->on('subevents')->onUpdate('CASCADE')->onUpdate('CASCADE');
+            $table->foreign('subevent_id')->references('id')->on('subevents')->onDelete('CASCADE')->onUpdate('CASCADE');
 
         });
     }

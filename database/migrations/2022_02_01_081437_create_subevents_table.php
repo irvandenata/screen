@@ -19,10 +19,10 @@ class CreateSubeventsTable extends Migration
             $table->unsignedBigInteger('event_id');
             $table->string('start_regist');
             $table->string('end_regist');
+            $table->boolean('status')->default(0);
             $table->text('slug');
             $table->timestamps();
-            $table->foreign('event_id')->references('id')->on('events')->onUpdate('CASCADE')->onUpdate('CASCADE');
-
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 

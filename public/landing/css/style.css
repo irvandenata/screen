@@ -199,10 +199,7 @@
 
 
 /*** Service ***/
-.service-item {
-    box-shadow: 0 0 45px rgba(0, 0, 0, .08);
-    transition: .5s;
-}
+
 
 .service-item:hover {
     background: var(--primary);

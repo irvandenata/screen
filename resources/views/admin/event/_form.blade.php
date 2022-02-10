@@ -22,7 +22,7 @@
     <div class="form-line">
         <label class="control-label ">Tanggal Kegiatan</label>
         <div class="input-group">
-            <input type="text" name="contest_date" class="form-control" placeholder="mm/dd/yyyy" id="datepicker">
+            <input autocomplete="off" type="text" name="contest_date" class="form-control" placeholder="mm/dd/yyyy" id="datepicker">
             <div class="input-group-append">
                 <span class="input-group-text"><i class="ti-calendar"></i></span>
             </div>

@@ -9,4 +9,8 @@ class Subform extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function form()
+    {
+        return $this->belongsTo(Form::class);
+    }
 }
