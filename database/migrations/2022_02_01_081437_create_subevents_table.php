@@ -16,6 +16,7 @@ class CreateSubeventsTable extends Migration
         Schema::create('subevents', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description');
             $table->unsignedBigInteger('event_id');
             $table->string('start_regist');
             $table->string('end_regist');

@@ -17,6 +17,7 @@
                                         <th width="10%">No</th>
                                         <th>Nama Input</th>
                                         <th>Jenis Input</th>
+                                        <th>Status Isi</th>
                                         <th>Opsi</th>
                                         <th width="20%">Action</th>
                                     </tr>

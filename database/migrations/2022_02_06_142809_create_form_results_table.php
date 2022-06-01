@@ -15,9 +15,10 @@ class CreateFormResultsTable extends Migration
     {
         Schema::create('form_results', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->string('value')->nullable();
             $table->string('identity');
             $table->string('type');
+            $table->boolean('require')->default(1);
             $table->unsignedBigInteger('form_id');
             $table->foreign('form_id')->references('id')->on('forms')->onDelete('CASCADE')->onUpdate('CASCADE');
 

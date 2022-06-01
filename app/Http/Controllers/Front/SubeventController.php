@@ -91,24 +91,38 @@ class SubeventController extends Controller
             if ($key == '_token') {
                 continue;
             }
-            if (count($value) < 3) {
 
-                $name_picture = Str::random(6) . '.png';
-                $item = new FormResult();
-                $item->form_id = $value[0];
-                $item->value = $name_picture;
-                $item->type = $value[1];
-                $namePath = "form";
-                $path = $namePath . "/" . $name_picture;
-                $file = $request->file($key)[$file];
-                $file->storeAs($namePath, $name_picture, 'public');
-                $namePath = "form";
-                $path = $namePath . "/" . $name_picture;
-                $item->identity = $identity . '-' . $random;
-                $item->save();
-                $item->files()->create(['link' => $path, 'type' => 'image']);
+            if (count($value) < 4) {
+                if ($value[2] == 0 && $request->file($key) == null) {
+                    $item = new FormResult();
+                    $item->form_id = $value[0];
+                    $item->value = "Kosong";
+                    $item->type = $value[1];
+                    $item->identity = $identity . '-' . $random;
+                    $item->save();
+                } else {
+                    $name_picture = Str::random(6) . '.png';
+                    $item = new FormResult();
+                    $item->form_id = $value[0];
+                    $item->value = $name_picture;
+                    $item->type = $value[1];
+                    $namePath = "form";
+                    $path = $namePath . "/" . $name_picture;
+                    $file = $request->file($key)[$file];
+                    $file->storeAs($namePath, $name_picture, 'public');
+                    $namePath = "form";
+                    $path = $namePath . "/" . $name_picture;
+                    $item->identity = $identity . '-' . $random;
+                    $item->save();
+                    $item->files()->create(['link' => $path, 'type' => 'image']);
+                }
+
                 $file++;
             } else {
+                if ($value[3] == 0 && $value[1] == null) {
+                    $value[1] = 'Kosong';
+                }
+
                 $item = new FormResult();
                 $item->form_id = $value[0];
                 $item->value = $value[1];

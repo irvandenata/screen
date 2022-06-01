@@ -23,11 +23,20 @@
 <style>
         h1,h2,h3,h4,h5,h6{
             color: {{ $font_color }} !important ;
+            margin: 0 !important;
+        }
+
+
+        p {
+            font-size: 10px !important;
         }
         :root {
         --primary: {{ $primary_color }};
         --light: #ffffff;
         --dark: {{ $dark_color }};
+        }
+         .navbar-dark{
+            background-color: var(--dark)
         }
         .bg-darks{
             background-color: var(--dark) !important;
@@ -64,6 +73,7 @@
         left: calc(50% - 1px);
         }
         .timeline-item{
+
         margin-bottom: 40px;
         width: 100%;
         position: relative;
@@ -93,6 +103,7 @@
         margin:6px 0 15px;
         }
         .timeline-content{
+        box-shadow: 0 0 45px rgba(0, 0, 0, 0.329) !important;
         background-color: var(--dark);
         padding: 30px;
         border-radius: 5px;
@@ -132,6 +143,12 @@
              .service-item {
              box-shadow: 0 0 45px rgba(0, 0, 0, 0.329) !important;
              transition: .5s;
+             border-radius: 10px !important;
+             min-height: 240px;
+             }
+             .rounded{
+                 box-shadow: 0 0 45px rgba(0, 0, 0, 0.329) !important;
+                  border-radius: 20px !important;
              }
 
     </style>
@@ -163,9 +180,9 @@
       <!-- Spinner End -->
       <!-- Navbar & Hero Start -->
       <div class="bg-color">
- <div class="container-fluid bg-dark position-relative p-0">
+ <div class="container-fluid position-relative p-0">
      <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-3 py-lg-0">
-         <a href="" class="navbar-brand p-0">
+         <a href="/" class="navbar-brand p-0">
              <img id="logo" src="{{ asset('storage').'/'. $logo }}" alt="">
              <!-- <img src="img/logo.png" alt="Logo"> -->
          </a>
@@ -174,7 +191,7 @@
          </button>
          <div class="collapse navbar-collapse" id="navbarCollapse">
              <div class="navbar-nav ms-auto  py-0 pe-4">
-                 <a href="#home" class="nav-item nav-link active">Beranda</a>
+                 <a href="#home" class="nav-item nav-link">Beranda</a>
                  <a href="#agenda" class="nav-item nav-link">Agenda</a>
                  <a href="#sejarah" class="nav-item nav-link">Sejarah</a>
                  <a href="#contact" class="nav-item nav-link">Kontak</a>
@@ -197,9 +214,9 @@
          </div>
      </nav>
 
-     <div style="height: 800px" class="container-fluid py-5  hero-header mb-5">
-         <div class="container my-5 py-5">
-             <div class="row align-items-center g-5">
+     <div style="height: 800px" class="container-fluid hero-header">
+         <div class="container py-5" id="home" >
+             <div class="row align-items-center g-5 py-5">
                  <div class="col-lg-6 text-center text-lg-start">
                      <h1 class="display-3 text-white animated slideInLeft">{{ $screen->name }}</h1>
                      <h3 class=" text-white animated slideInLeft">{{ $screen->theme }}</h3>
@@ -227,12 +244,12 @@
                      @foreach($event as $item)
                          @if($highlight_event != null && $highlight_event->config_value == $item->name )
                              <div class="col-lg-12 ol-sm-12 wow fadeInUp" data-wow-delay="0.1s">
-                                 <div class="service-item rounded pt-3">
+                                 <div class="service-item  pt-3">
                                      <div class="p-4">
                                          <div class="row">
                                              <div class="col-lg-8 col-sm-12 mb-4">
                                                  @if(count($item->files)>0)
-                                                     <img style="width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
+                                                     <img style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
                                                  @else
                                                      <img style="width: 100%" src="{{ asset('landing/img/noimage.png') }}" alt="">
                                                  @endif
@@ -248,13 +265,13 @@
                                  </div>
                              </div>
                          @else
-                             <div class="col-lg-4  col-sm-12 wow fadeInUp" data-wow-delay="0.1s">
-                                 <div class="service-item rounded">
-                                     <div class="p-3">
+                             <div class="col-lg-4  col-sm-12 wow fadeInUp" data-wow-delay="0.1s" >
+                                 <div class="service-item" >
+                                     <div class="p-4">
                                          <div class="row">
                                              <div class="col-lg-5 col-sm-12">
                                                  @if(count($item->files)>0)
-                                                     <img style="width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
+                                                     <img style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
 
 
                                                  @else
@@ -295,14 +312,14 @@
                                  <div class="timeline-dot"></div>
 
                                  <div class="timeline-date">{{ $item->year }}</div>
-                                 <div class="timeline-content  service-item">
+                                 <div class="timeline-content">
                                      <div class="row">
 
-                                         <div class="col-8">
+                                         <div class="col-lg-6 col-sm-6 mb-2">
                                              <h1 class="text-white">{{ $item->name }}</h1>
                                              <h6 class="text-white">{{ $item->leader }}</h6>
                                          </div>
-                                         <div class="col-4">
+                                         <div class="col-lg-6 col-sm-6">
                                              @if(count($item->files)>0)
                                                  <img style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
 
@@ -323,18 +340,18 @@
          </div>
      </div>
  </div>
- <div class="container-xxl  py-5">
-     <div class="container py-5">
+ <div class="container-fluid  py-5 bg-white" >
+     <div class="container py-5" >
          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-             <h1 class="mb-5">SUPPORTED BY</h1>
+             <h1 class="mb-1">SUPPORTED BY</h1>
          </div>
-         <div class="container-xxl py-5 wow fadeInUp">
-             <div class="container ">
-                 <div class="row justify-content-center">
+         <div class="container-xxl py-3 wow fadeInUp">
+             <div class="container">
+                 <div class="row align-items-center justify-content-center">
                      @foreach($sponsor as $item)
-                         <div class="col-lg-3 col-sm-12 text-center">
+                         <div class="col-lg-3 col-sm-12 m-4 text-center p-4" style="margin:10px;">
                              @if(count($item->files)>0)
-                                 <img class="service-item" style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
+                                 <img  style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
                              @else
                                  <img style="max-width: 100%" src="{{ asset('landing/img/noimage.png') }}" alt="">
                              @endif
@@ -346,17 +363,17 @@
      </div>
  </div>
 
- <div class="container-xxl  py-5">
+ <div class="container-fluid bg-white  py-5">
      <div class="container py-5">
          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-             <h1 class="mb-5">MEDIA PARTNERS</h1>
+             <h1 class="mb-1">MEDIA PARTNERS</h1>
          </div>
-         <div class="container-xxl wow fadeInUp py-5">
-             <div class="row justify-content-center">
+         <div class="container-xxl py-3">
+             <div class="row align-items-center justify-content-center">
                  @foreach($mediapartner as $item)
-                     <div class="col-lg-2 col-sm-6 my-4 text-center">
+                     <div class="col-lg-2 col-sm-6 my-4 text-center  wow fadeInUp  p-3 " data-wow-delay="0.2s m-4" style="margin:10px;">
                          @if(count($item->files)>0)
-                             <img class="service-item" style="max-width: 100%" src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
+                             <img  style="max-width: 100%; " src="{{ asset('storage').'/'. $item->files->first()->link }}" alt="">
                          @else
                              <img style="max-width: 100%" src="{{ asset('landing/img/noimage.png') }}" alt="">
                          @endif

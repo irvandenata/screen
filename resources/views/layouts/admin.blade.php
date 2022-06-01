@@ -24,6 +24,12 @@
     @stack('css')
     @stack('style')
 
+    <style>
+        .modal-lg {
+    max-width: 80%;
+}
+    </style>
+
 </head>
 
 

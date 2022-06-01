@@ -56,6 +56,7 @@
     @include('admin.subevent._form')
     @include('admin.subevent._addform')
     @include('admin.subevent._detailform')
+    @include('admin.subevent._editform')
     @include('admin.subevent._detailresponden')
 </div>
 @endsection
@@ -363,6 +364,7 @@
                             id: idForm,
                             input: $('.input').val(),
                             type: $('.type').val(),
+                            require: $('.require').val(),
                             option: $("input[name='subform[]']")
                                 .map(function () {
                                     return $(this).val();
@@ -463,6 +465,110 @@
                 }
             })
         }
+        async function editForm(id) {
+             $('#modalDetailForm').modal('hide');
+            let data;
+            await  $.ajax({
+                        url: '/admin/subevent/getform/'+id,
+                        type: "get",
+                        cache: false,
+                        dataType: 'json',
+
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                            data = result;
+                        },
+                        error: function (result) {
+                            $('#modalForm').modal('hide');
+
+                            if (result.responseJSON) {
+                                getError(result.responseJSON.errors);
+                            } else {
+                                console.log(result);
+                            }
+                        },
+                    })
+                   await  console.log(data)
+                   $('.inputEdit').val(data.name)
+                   $('#idEdit').val(data.id)
+                   $('.typeEdit option[value="' + data.type +'"]').prop("selected", true);
+                   $('.requireEdit option[value="' + data.require+'"]').prop("selected", true);
+                   $('#modalEditForm').modal('show');
+        }
+
+        $('#simpanEdit').on('click',function(e){
+            e.preventDefault()
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Are You Sure ?',
+                text: "Kamu Akan Mengubah Input Ini!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes!',
+                cancelButtonText: 'No, Quit!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+
+                    $.ajax({
+                        url: '/admin/subevent/updateform/'+$('#idEdit').val(),
+                        type: "put",
+                        cache: false,
+                        dataType: 'json',
+                        data: {
+                            id: $('#idEdit').val(),
+                            input: $('.inputEdit').val(),
+                            type: $('.typeEdit').val(),
+                            require: $('.requireEdit').val(),
+                            option: $("input[name='subform[]']")
+                                .map(function () {
+                                    return $(this).val();
+                                }).get(),
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function (result) {
+                           $('#modalEditForm').modal('hide');
+                        },
+                        error: function (result) {
+                            $('#modalForm').modal('hide');
+
+                            if (result.responseJSON) {
+                                getError(result.responseJSON.errors);
+                            } else {
+                                console.log(result);
+                            }
+                        },
+                    })
+                    swalWithBootstrapButtons.fire(
+                        'Success!',
+                        'Input Berhasil diubah',
+                        'success'
+                    )
+
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancel',
+                        'Process Has Been Canceled',
+                        'error'
+                    )
+                }
+            })
+
+        })
 
     </script>
 
@@ -471,6 +577,7 @@
         function setData(result) {
             $('input[name=id]').val(result.id);
             $('input[name=name]').val(result.name);
+            $('.desc').val(result.description);
             $('input[name=start_regist]').val(result.start_regist);
             $('input[name=end_regist]').val(result.end_regist);
         }
@@ -529,6 +636,10 @@
                 },
                 {
                     data: 'type',
+                    orderable: true
+                },
+                {
+                    data: 'require_stat',
                     orderable: true
                 },
                 {

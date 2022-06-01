@@ -12,14 +12,14 @@
 
 @section('content')
 <!-- Navbar & Hero Start -->
-<div style="height: 900px;" class="container-fluid py-5 hero-header mb-5">
-    <div class="container-xxl mt-5 py-5">
+<div style="min-height: 900px;" class="container-fluid py-5 hero-header ">
+    <div class="container mt-5 py-5">
         <div class="row align-items-center g-5">
             <div class="col-lg-6 text-center text-lg-start">
                 <h1 class="display-3 text-white animated slideInLeft">{{ $subevent->name }}</h1>
-                <h3 class=" text-white animated slideInLeft">{{ $subevent->description }}</h3>
+
                 <hr size='10' class="text-white">
-                <h6 class="text-white animated slideInLeft mb-4 pb-2">awdaw</h6>
+                <h4 class=" text-white animated slideInLeft">{{ $subevent->description }}</h4>
                 <div class="row justify-content-center animated slideInLeft">
                     <div class="col-lg-4 text-center my-2">
                         <div class="btn btn-primary pt-3 rounded-pill">

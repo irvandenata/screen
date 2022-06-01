@@ -11,7 +11,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                            <table id="detailResponden" class="table table-bordered  m-t-30" >
+                            <table id="detailResponden" class="table table-bordered  m-t-30" style="width: 100%" >
                                 <thead>
                                     <tr id="headtable">
                                     </tr>

@@ -19,6 +19,9 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function () {
     Route::get('/readnotif', [App\Http\Controllers\Admin\NotificationController::class, 'readNotification']);
 
     Route::post('subevent/saveform', [App\Http\Controllers\Admin\SubeventController::class, 'saveForm']);
+    Route::get('subevent/getform/{id}', [App\Http\Controllers\Admin\SubeventController::class, 'editForm']);
+    Route::put('subevent/updateform/{id}', [App\Http\Controllers\Admin\SubeventController::class, 'updateForm']);
+
     Route::post('form', [App\Http\Controllers\Admin\SubeventController::class, 'getForm']);
     Route::post('responden', [App\Http\Controllers\Admin\SubeventController::class, 'getResponden']);
     Route::get('componentform/{id}', [App\Http\Controllers\Admin\SubeventController::class, 'getComponentForm']);

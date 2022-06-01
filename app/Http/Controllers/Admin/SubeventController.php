@@ -79,6 +79,7 @@ class SubeventController extends Controller
         $item->name = $request->input;
         $item->value = Str::of($request->input)->slug('-');
         $item->subevent_id = $request->id;
+        $item->require = $request->require;
         $item->type = $request->type;
         $item->save();
         if (isset($request->option) > 0) {
@@ -92,6 +93,37 @@ class SubeventController extends Controller
         return response()->json(['message', 'Form Berhasil ditambahkan']);
 
     }
+    public function updateForm(Request $request, $id)
+    {
+
+        $item = Form::where('id', $id)->first();
+        $item->name = $request->input;
+        $item->value = Str::of($request->input)->slug('-');
+        $item->require = $request->require;
+        $item->type = $request->type;
+        $item->save();
+        $data = Subform::where('id', $item->id)->get();
+        foreach ($data as $value) {
+            $value->delete();
+        };
+        if (isset($request->option) > 0) {
+            for ($i = 0; $i < count($request->option); $i++) {
+                $data = new Subform();
+                $data->name = $request->option[$i];
+                $data->form_id = $item->id;
+                $data->save();
+            }
+        }
+        return response()->json(['message', 'Form Berhasil ditambahkan']);
+
+    }
+    public function editForm($id)
+    {
+        $item = Form::where('id', $id)->first();
+        return $item;
+
+    }
+
     public function getForm(Request $request)
     {
         if ($request->ajax()) {
@@ -102,8 +134,13 @@ class SubeventController extends Controller
                         return $data->name;
                     });
                 })
+                ->addColumn('require_stat', function ($item) {
+                    return $item->require ? 'Wajid' : 'Optional';
+
+                })
                 ->addColumn('action', function ($item) {
                     return '
+                            <a class="btn btn-warning btn-sm m-1"  onclick="editForm(' . $item->id . ')"><i class="fa fa-pencil"></i></span></a>
                            <a class="btn btn-danger btn-sm m-1"  onclick="deleteForm(' . $item->id . ')"><i class="fa fa-trash"></i></span></a>
                            ';
                 })
@@ -115,6 +152,7 @@ class SubeventController extends Controller
         return response()->json(['message', 'success']);
 
     }
+
     public function getComponentForm($id)
     {
         $item = Subevent::where('id', $id)->first()->forms;
@@ -138,7 +176,7 @@ class SubeventController extends Controller
                 $isi['identity'] = $value->first()['identity'];
                 foreach ($value as $data) {
 
-                    if ($data->form->type == 'file') {
+                    if ($data->form->type == 'file' && $data->value != 'Kosong') {
 
                         array_push($rawCol, $data->form->name);
                         $isi[$data->form->name] = '
@@ -282,6 +320,7 @@ class SubeventController extends Controller
         $item = Subevent::where('id', $id)->first();
         $item->name = $request->name;
         $item->start_regist = $request->start_regist;
+        $item->description = $request->description;
         $item->end_regist = $request->end_regist;
         $item->slug = Str::of($request->name)->slug('-');
         $item->save();

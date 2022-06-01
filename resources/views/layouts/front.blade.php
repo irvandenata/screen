@@ -72,7 +72,7 @@ background-size: cover;
       <!-- Spinner End -->
 <div class="container-fluid position-relative p-0">
     <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-3 py-lg-0">
-        <a href="" class="navbar-brand p-0">
+        <a href="/" class="navbar-brand p-0">
             <img id="logo" src="{{ asset('storage').'/'. $logo }}" alt="">
             <!-- <img src="img/logo.png" alt="Logo"> -->
         </a>

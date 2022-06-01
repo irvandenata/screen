@@ -8,6 +8,12 @@
 </div>
 <div class="form-group">
     <div class="form-line">
+        <label for="description">Deskripsi</label>
+        <textarea name="description" class="form-control desc" required></textarea>
+    </div>
+</div>
+<div class="form-group">
+    <div class="form-line">
         <label class="control-label">Registrasi (Buka - Tutup)</label>
 
         <div class="input-daterange input-group" id="date-range">
